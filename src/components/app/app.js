@@ -10,10 +10,7 @@ export default class App extends React.Component {
   maxId = 0;
   interval;
   state = {
-    todoData: [
-      { label: 'asd', min: 1, sec: 1, startTime: new Date().getTime(), done: false, id: 100 },
-      { label: 'asds', min: 2, sec: 2, startTime: new Date().getTime(), done: false, id: 101 },
-    ],
+    todoData: [],
     filter: 'all',
   };
   createTodoItem(label, min, sec) {
