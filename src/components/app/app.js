@@ -8,13 +8,19 @@ import './app.css';
 
 export default class App extends React.Component {
   maxId = 0;
+  interval;
   state = {
-    todoData: [],
+    todoData: [
+      { label: 'asd', min: 1, sec: 1, startTime: new Date().getTime(), done: false, id: 100 },
+      { label: 'asds', min: 2, sec: 2, startTime: new Date().getTime(), done: false, id: 101 },
+    ],
     filter: 'all',
   };
-  creatTodoitem(label) {
+  createTodoItem(label, min, sec) {
     return {
       label,
+      min,
+      sec,
       startTime: new Date().getTime(),
       done: false,
       id: this.maxId++,
@@ -29,14 +35,15 @@ export default class App extends React.Component {
       };
     });
   };
-  addItem = (text) => {
-    const newItem = this.creatTodoitem(text);
+  addItem = (text, min, sec) => {
+    const newItem = this.createTodoItem(text, min, sec);
     this.setState(({ todoData }) => {
       const newArr = [...todoData, newItem];
       return { todoData: newArr };
     });
   };
   onToggle = (id) => {
+    clearInterval(this.interval);
     this.setState(({ todoData }) => {
       const idx = todoData.findIndex((el) => el.id === id);
       const oldItem = todoData[idx];
@@ -80,6 +87,40 @@ export default class App extends React.Component {
       };
     });
   };
+  onPlay = (id) => {
+    clearInterval(this.interval);
+    this.interval = setInterval(() => {
+      this.onTick(id);
+    }, 1000);
+  };
+  onStop = () => {
+    clearInterval(this.interval);
+  };
+  onTick = (id) => {
+    this.setState(({ todoData }) => {
+      const idx = todoData.findIndex((el) => el.id === id);
+      const oldItem = todoData[idx];
+      if (Number(oldItem.min) !== 0 && Number(oldItem.sec) === 0) {
+        const newItem = { ...oldItem, min: Number(oldItem.min) - 1, sec: 59 };
+        const newTodoData = [...todoData.slice(0, idx), newItem, ...todoData.slice(idx + 1)];
+        return {
+          todoData: newTodoData,
+        };
+      } else if (Number(oldItem.min) === 0 && Number(oldItem) === 0) {
+        const newItem = { ...oldItem, min: 0, sec: 0 };
+        const newTodoData = [...todoData.slice(0, idx), newItem, ...todoData.slice(idx + 1)];
+        return {
+          todoData: newTodoData,
+        };
+      } else {
+        const newItem = { ...oldItem, sec: Number(oldItem.sec) - 1 };
+        const newTodoData = [...todoData.slice(0, idx), newItem, ...todoData.slice(idx + 1)];
+        return {
+          todoData: newTodoData,
+        };
+      }
+    });
+  };
   render() {
     const { todoData, filter } = this.state;
     const visibleItems = this.filter(todoData, filter);
@@ -87,13 +128,16 @@ export default class App extends React.Component {
     const todoCount = todoData.length - doneCount;
     return (
       <section className="todoapp">
-        <NewTaskForm onItemAdded={this.addItem} />
+        <NewTaskForm addItem={this.addItem} />
         <TaskList
           itemsActive={this.itemsActive}
           onEditing={this.onEditing}
           onDeleted={this.deleteItem}
           onToggle={this.onToggle}
           todos={visibleItems}
+          onPlay={this.onPlay}
+          onStop={this.onStop}
+          onTick={this.onTick}
         />
         <Footer
           filter={filter}

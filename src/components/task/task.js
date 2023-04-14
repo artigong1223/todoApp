@@ -2,6 +2,8 @@ import React from 'react';
 import propTypes from 'prop-types';
 import { formatDistanceToNow } from 'date-fns';
 
+import TaskTogglTime from '../task-toggl-time/taskTogglTime';
+
 import './task.css';
 
 const classNames = require('classnames');
@@ -11,6 +13,9 @@ export default class Task extends React.Component {
     onToggle: () => {},
     onDeleted: () => {},
     onEditing: () => {},
+    onStop: () => {},
+    onPlay: () => {},
+    onTick: () => {},
   };
   static propTypes = {
     onToggle: propTypes.func,
@@ -19,6 +24,11 @@ export default class Task extends React.Component {
     done: propTypes.bool.isRequired,
     label: propTypes.node.isRequired,
     editing: propTypes.node,
+    onStop: propTypes.func,
+    onPlay: propTypes.func,
+    onTick: propTypes.func,
+    min: propTypes.number.isRequired,
+    sec: propTypes.number.isRequired,
     startTime: propTypes.node.isRequired,
   };
   state = {
@@ -44,7 +54,7 @@ export default class Task extends React.Component {
   };
   render() {
     const { editing, edit } = this.state;
-    const { onDeleted, onToggle, done, startTime } = this.props;
+    const { onDeleted, onToggle, done, startTime, onPlay, onStop, onTick, min, sec } = this.props;
     const time = formatDistanceToNow(startTime, {
       includeSeconds: true,
     });
@@ -54,8 +64,16 @@ export default class Task extends React.Component {
         <div className="view">
           <input className="toggle" type={'checkbox'} onClick={onToggle} checked={done} readOnly />
           <label onClick={onToggle}>
-            <span className="description">{editing}</span>
-            <span className="created">created {time} ago</span>
+            <span className="title">{editing}</span>
+            <TaskTogglTime
+              min={min}
+              sec={sec}
+              done={done}
+              onPlay={() => onPlay()}
+              onStop={() => onStop()}
+              onTick={() => onTick()}
+            />
+            <span className="description">created {time} ago</span>
           </label>
           <button onClick={this.onEdit} className="icon icon-edit"></button>
           <button onClick={onDeleted} className="icon icon-destroy"></button>
