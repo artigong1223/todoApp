@@ -27,8 +27,8 @@ export default class Task extends React.Component {
     onStop: propTypes.func,
     onPlay: propTypes.func,
     onTick: propTypes.func,
-    min: propTypes.number.isRequired,
-    sec: propTypes.number.isRequired,
+    min: propTypes.node.isRequired,
+    sec: propTypes.node.isRequired,
     startTime: propTypes.node.isRequired,
   };
   state = {

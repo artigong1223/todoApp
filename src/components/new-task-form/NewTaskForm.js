@@ -22,22 +22,18 @@ export default class NewTaskForm extends React.Component {
     }
   };
   onMinChange = (e) => {
-    if (!e.target.value.match(/^\d+$/)) {
-      alert('Неверный формат времени ');
-      e.target.value = '';
+    if (e.target.value.match(/^\d+$/) && e.target.value.length < 3) {
+      this.setState({
+        min: e.target.value,
+      });
     }
-    this.setState({
-      min: e.target.value,
-    });
   };
   onSecChange = (e) => {
-    if (!e.target.value.match(/^\d+$/) || Number(e.target.value) > 59) {
-      alert('Неверный формат времени ');
-      e.target.value = '';
+    if (e.target.value.match(/^\d+$/) && e.target.value.length < 3) {
+      this.setState({
+        sec: e.target.value,
+      });
     }
-    this.setState({
-      sec: e.target.value,
-    });
   };
   onSubmit = (e) => {
     e.preventDefault();
@@ -62,6 +58,7 @@ export default class NewTaskForm extends React.Component {
               placeholder="Task"
               autoFocus
               value={this.state.label}
+              required
             />
           </label>
           <input
@@ -70,6 +67,7 @@ export default class NewTaskForm extends React.Component {
             placeholder="Min"
             autoFocus
             value={this.state.min}
+            required
           ></input>
           <input
             onChange={this.onSecChange}
@@ -77,6 +75,7 @@ export default class NewTaskForm extends React.Component {
             placeholder="Sec"
             autoFocus
             value={this.state.sec}
+            required
           ></input>
           <button type="submit"></button>
         </form>

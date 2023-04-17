@@ -103,9 +103,10 @@ export default class App extends React.Component {
         return {
           todoData: newTodoData,
         };
-      } else if (Number(oldItem.min) === 0 && Number(oldItem) === 0) {
+      } else if (Number(oldItem.min) === 0 && Number(oldItem.sec) === 0) {
         const newItem = { ...oldItem, min: 0, sec: 0 };
         const newTodoData = [...todoData.slice(0, idx), newItem, ...todoData.slice(idx + 1)];
+        clearInterval(this.interval);
         return {
           todoData: newTodoData,
         };
