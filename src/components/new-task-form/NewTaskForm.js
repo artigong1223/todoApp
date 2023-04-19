@@ -15,31 +15,23 @@ export default class NewTaskForm extends React.Component {
     min: '',
   };
   onLabelChange = (e) => {
-    if (e.target.value.length < 10) {
-      this.setState({
-        label: e.target.value,
-      });
-    }
+    this.setState({
+      label: e.target.value,
+    });
   };
   onMinChange = (e) => {
-    if (e.target.value.match(/^\d+$/) && e.target.value.length < 3) {
-      this.setState({
-        min: e.target.value,
-      });
-    }
+    this.setState({
+      min: e.target.value,
+    });
   };
   onSecChange = (e) => {
-    if (e.target.value.match(/^\d+$/) && e.target.value.length < 3) {
-      this.setState({
-        sec: e.target.value,
-      });
-    }
+    this.setState({
+      sec: e.target.value,
+    });
   };
   onSubmit = (e) => {
     e.preventDefault();
-    if (this.state.label.length && !this.state.label[0].match(/\s/) && this.state.min.length && this.state.sec.length) {
-      this.props.addItem(this.state.label, this.state.min, this.state.sec);
-    }
+    this.props.addItem(this.state.label, this.state.min, this.state.sec);
     this.setState({
       label: '',
       min: '',
@@ -53,6 +45,8 @@ export default class NewTaskForm extends React.Component {
         <form onSubmit={this.onSubmit} className="new-todo-form">
           <label>
             <input
+              minLength={1}
+              maxLength={10}
               onChange={this.onLabelChange}
               className="new-todo"
               placeholder="Task"
@@ -62,6 +56,9 @@ export default class NewTaskForm extends React.Component {
             />
           </label>
           <input
+            pattern="\d+"
+            minLength={1}
+            maxLength={2}
             onChange={this.onMinChange}
             className="new-todo-form__timer"
             placeholder="Min"
@@ -70,6 +67,9 @@ export default class NewTaskForm extends React.Component {
             required
           ></input>
           <input
+            pattern="\d+"
+            minLength={1}
+            maxLength={2}
             onChange={this.onSecChange}
             className="new-todo-form__timer"
             placeholder="Sec"
