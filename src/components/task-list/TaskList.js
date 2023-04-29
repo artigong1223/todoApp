@@ -24,6 +24,7 @@ function TaskList(props) {
     min: propTypes.number,
     sec: propTypes.number,
     todos: propTypes.arrayOf(propTypes.object).isRequired,
+    count: propTypes.bool,
   };
   const { todos, onDeleted, onToggle, onEditing, onStop, onPlay, onTick, min, sec, count } = props;
   const elements = todos.map((items) => {

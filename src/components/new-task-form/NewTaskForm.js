@@ -1,85 +1,74 @@
-import React from 'react';
+import React, { useState } from 'react';
 import propTypes from 'prop-types';
 
 import './new-task-form.css';
 
-export default class NewTaskForm extends React.Component {
-  static propTypes = {
+function NewTaskForm(props) {
+  NewTaskForm.propTypes = {
     label: propTypes.string,
     sec: propTypes.number,
     min: propTypes.number,
   };
-  state = {
-    label: '',
-    sec: '',
-    min: '',
+  const [label, setLabel] = useState('');
+  const [sec, setSec] = useState('');
+  const [min, setMin] = useState('');
+  const onLabelChange = (e) => {
+    setLabel(e.target.value);
   };
-  onLabelChange = (e) => {
-    this.setState({
-      label: e.target.value,
-    });
+  const onMinChange = (e) => {
+    setMin(e.target.value);
   };
-  onMinChange = (e) => {
-    this.setState({
-      min: e.target.value,
-    });
+  const onSecChange = (e) => {
+    setSec(e.target.value);
   };
-  onSecChange = (e) => {
-    this.setState({
-      sec: e.target.value,
-    });
-  };
-  onSubmit = (e) => {
+  const onSubmit = (e) => {
     e.preventDefault();
-    this.props.addItem(this.state.label, this.state.min, this.state.sec);
-    this.setState({
-      label: '',
-      min: '',
-      sec: '',
-    });
+    props.addItem(label, min, sec);
+    setSec('');
+    setMin('');
+    setLabel('');
   };
-  render() {
-    return (
-      <header className="header">
-        <h1>Todos</h1>
-        <form onSubmit={this.onSubmit} className="new-todo-form">
-          <label>
-            <input
-              minLength={1}
-              maxLength={10}
-              onChange={this.onLabelChange}
-              className="new-todo"
-              placeholder="Task"
-              autoFocus
-              value={this.state.label}
-              required
-            />
-          </label>
+  return (
+    <header className="header">
+      <h1>Todos</h1>
+      <form onSubmit={onSubmit} className="new-todo-form">
+        <label>
           <input
-            pattern="\d+"
             minLength={1}
-            maxLength={2}
-            onChange={this.onMinChange}
-            className="new-todo-form__timer"
-            placeholder="Min"
+            maxLength={8}
+            onChange={onLabelChange}
+            className="new-todo"
+            placeholder="Task"
             autoFocus
-            value={this.state.min}
+            value={label}
             required
-          ></input>
-          <input
-            pattern="\d+"
-            minLength={1}
-            maxLength={2}
-            onChange={this.onSecChange}
-            className="new-todo-form__timer"
-            placeholder="Sec"
-            autoFocus
-            value={this.state.sec}
-            required
-          ></input>
-          <button type="submit"></button>
-        </form>
-      </header>
-    );
-  }
+          />
+        </label>
+        <input
+          pattern="\d+"
+          minLength={1}
+          maxLength={2}
+          onChange={onMinChange}
+          className="new-todo-form__timer"
+          placeholder="Min"
+          autoFocus
+          value={min}
+          required
+        ></input>
+        <input
+          pattern="\d+"
+          minLength={1}
+          maxLength={2}
+          onChange={onSecChange}
+          className="new-todo-form__timer"
+          placeholder="Sec"
+          autoFocus
+          value={sec}
+          required
+        ></input>
+        <button type="submit"></button>
+      </form>
+    </header>
+  );
 }
+export default NewTaskForm;

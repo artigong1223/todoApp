@@ -13,6 +13,8 @@ function TaskTogglTime(props) {
     onPlay: propTypes.func,
     min: propTypes.node.isRequired,
     sec: propTypes.node.isRequired,
+    onTick: propTypes.func,
+    count: propTypes.bool,
   };
   const { min, sec, done, onTick, count, onPlay, onStop } = props;
   React.useEffect(() => {

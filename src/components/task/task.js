@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import propTypes from 'prop-types';
 import { formatDistanceToNow } from 'date-fns';
 
@@ -8,8 +8,8 @@ import './task.css';
 
 const classNames = require('classnames');
 
-export default class Task extends React.Component {
-  static defaultProps = {
+function Task(props) {
+  Task.defaultProps = {
     onToggle: () => {},
     onDeleted: () => {},
     onEditing: () => {},
@@ -17,7 +17,7 @@ export default class Task extends React.Component {
     onPlay: () => {},
     onTick: () => {},
   };
-  static propTypes = {
+  Task.propTypes = {
     onToggle: propTypes.func,
     onDeleted: propTypes.func,
     onEditing: propTypes.func,
@@ -30,59 +30,50 @@ export default class Task extends React.Component {
     min: propTypes.node.isRequired,
     sec: propTypes.node.isRequired,
     startTime: propTypes.node.isRequired,
+    count: propTypes.bool,
   };
-  state = {
-    edit: false,
-    editing: this.props.label,
+  const [edit, setEdit] = useState(false);
+  const [editing, setEditing] = useState(props.label);
+  const onEdit = () => {
+    setEdit(true);
   };
-  onEdit = () => {
-    this.setState({
-      edit: true,
-    });
-  };
-  onSubmit = (e) => {
+  const onSubmit = (e) => {
     e.preventDefault();
-    this.props.onEditing(this.state.editing);
-    this.setState({
-      edit: false,
-    });
+    props.onEditing(editing);
+    setEdit(false);
   };
-  onLabelChange = (e) => {
-    this.setState({
-      editing: e.target.value,
-    });
+  const onLabelChange = (e) => {
+    setEditing(e.target.value);
   };
-  render() {
-    const { editing, edit } = this.state;
-    const { onDeleted, onToggle, done, startTime, onPlay, onStop, onTick, min, sec, count } = this.props;
-    const time = formatDistanceToNow(startTime, {
-      includeSeconds: true,
-    });
-    const clazz = classNames({ completed: done }, { editing: edit });
-    return (
-      <li className={clazz}>
-        <div className="view">
-          <input className="toggle" type={'checkbox'} onClick={onToggle} checked={done} readOnly />
-          <label onClick={onToggle}>
-            <span className="title">{editing}</span>
-            <TaskTogglTime
-              min={min}
-              sec={sec}
-              count={count}
-              done={done}
-              onPlay={() => onPlay()}
-              onStop={() => onStop()}
-              onTick={() => onTick()}
-            />
-            <span className="description">created {time} ago</span>
-          </label>
-          <button onClick={this.onEdit} className="icon icon-edit"></button>
-          <button onClick={onDeleted} className="icon icon-destroy"></button>
-        </div>
-        <form onSubmit={this.onSubmit}>
-          <input type={'text'} className="edit" onChange={this.onLabelChange} value={editing} />
-        </form>
-      </li>
-    );
-  }
+  const { onDeleted, onToggle, done, startTime, onPlay, onStop, onTick, min, sec, count } = props;
+  const time = formatDistanceToNow(startTime, {
+    includeSeconds: true,
+  });
+  const clazz = classNames({ completed: done }, { editing: edit });
+  return (
+    <li className={clazz}>
+      <div className="view">
+        <input className="toggle" type={'checkbox'} onClick={onToggle} checked={done} readOnly />
+        <label onClick={onToggle}>
+          <span className="title">{editing}</span>
+          <TaskTogglTime
+            min={min}
+            sec={sec}
+            count={count}
+            done={done}
+            onPlay={() => onPlay()}
+            onStop={() => onStop()}
+            onTick={() => onTick()}
+          />
+          <span className="description">created {time} ago</span>
+        </label>
+        <button onClick={onEdit} className="icon icon-edit"></button>
+        <button onClick={onDeleted} className="icon icon-destroy"></button>
+      </div>
+      <form onSubmit={onSubmit}>
+        <input maxLength={8} type={'text'} className="edit" onChange={onLabelChange} value={editing} />
+      </form>
+    </li>
+  );
 }
+export default Task;
