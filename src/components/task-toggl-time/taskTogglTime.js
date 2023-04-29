@@ -1,39 +1,48 @@
 import React from 'react';
 import propTypes from 'prop-types';
 
-export default class TaskTogglTime extends React.Component {
-  static defaultProps = {
+function TaskTogglTime(props) {
+  TaskTogglTime.defaultProps = {
     onStop: () => {},
     onPlay: () => {},
     onTick: () => {},
   };
-  static propTypes = {
+  TaskTogglTime.propTypes = {
     done: propTypes.bool.isRequired,
     onStop: propTypes.func,
     onPlay: propTypes.func,
     min: propTypes.node.isRequired,
     sec: propTypes.node.isRequired,
   };
-  render() {
-    const { onPlay, onStop, min, sec, done } = this.props;
-    return (
-      <span className="desc">
-        <span
-          onClick={(e) => {
-            e.stopPropagation();
-            !done ? onPlay() : null;
-          }}
-          className="icon icon-play"
-        ></span>
-        <span
-          onClick={(e) => {
-            e.stopPropagation();
-            !done ? onStop() : null;
-          }}
-          className="icon icon-pause"
-        ></span>
-        {min}:{sec}
-      </span>
-    );
-  }
+  const { min, sec, done, onTick, count, onPlay, onStop } = props;
+  React.useEffect(() => {
+    if (!done) {
+      const interval = setInterval(() => {
+        count && onTick();
+      }, 1000);
+      return () => {
+        clearInterval(interval);
+      };
+    }
+  });
+  return (
+    <span className="desc">
+      <span
+        onClick={(e) => {
+          e.stopPropagation();
+          onPlay();
+        }}
+        className="icon icon-play"
+      ></span>
+      <span
+        onClick={(e) => {
+          e.stopPropagation();
+          onStop();
+        }}
+        className="icon icon-pause"
+      ></span>
+      {min}:{sec}
+    </span>
+  );
 }
+export default TaskTogglTime;

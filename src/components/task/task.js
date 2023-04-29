@@ -54,7 +54,7 @@ export default class Task extends React.Component {
   };
   render() {
     const { editing, edit } = this.state;
-    const { onDeleted, onToggle, done, startTime, onPlay, onStop, onTick, min, sec } = this.props;
+    const { onDeleted, onToggle, done, startTime, onPlay, onStop, onTick, min, sec, count } = this.props;
     const time = formatDistanceToNow(startTime, {
       includeSeconds: true,
     });
@@ -68,6 +68,7 @@ export default class Task extends React.Component {
             <TaskTogglTime
               min={min}
               sec={sec}
+              count={count}
               done={done}
               onPlay={() => onPlay()}
               onStop={() => onStop()}

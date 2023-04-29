@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import NewTaskForm from '../new-task-form/NewTaskForm';
 import TaskList from '../task-list/TaskList';
@@ -6,63 +6,45 @@ import Footer from '../footer/footer';
 
 import './app.css';
 
-export default class App extends React.Component {
-  maxId = 0;
-  interval;
-  state = {
-    todoData: [],
-    filter: 'all',
-  };
-  createTodoItem(label, min, sec) {
+function App() {
+  const [todoData, setTodoData] = useState([]);
+  const [filter, setFilter] = useState('all');
+  const createTodoItem = (label, min, sec) => {
     return {
       label,
       min,
       sec,
       startTime: new Date().getTime(),
       done: false,
-      id: this.maxId++,
+      id: new Date().getTime(),
+      count: false,
     };
-  }
-  deleteItem = (id) => {
-    this.setState(({ todoData }) => {
-      const idx = todoData.findIndex((el) => el.id === id);
-      const newArray = [...todoData.slice(0, idx), ...todoData.slice(idx + 1)];
-      return {
-        todoData: newArray,
-      };
-    });
   };
-  addItem = (text, min, sec) => {
-    const newItem = this.createTodoItem(text, min, sec);
-    this.setState(({ todoData }) => {
-      const newArr = [...todoData, newItem];
-      return { todoData: newArr };
-    });
+  const deleteItem = (id) => {
+    const idx = todoData.findIndex((el) => el.id === id);
+    const newArray = [...todoData.slice(0, idx), ...todoData.slice(idx + 1)];
+    setTodoData(newArray);
   };
-  onToggle = (id) => {
-    clearInterval(this.interval);
-    this.setState(({ todoData }) => {
-      const idx = todoData.findIndex((el) => el.id === id);
-      const oldItem = todoData[idx];
-      const newItem = { ...oldItem, done: !oldItem.done };
-      const newArray = [...todoData.slice(0, idx), newItem, ...todoData.slice(idx + 1)];
-      return {
-        todoData: newArray,
-      };
-    });
+  const addItem = (text, min, sec) => {
+    const newItem = createTodoItem(text, min, sec);
+    const newArr = [...todoData, newItem];
+    setTodoData(newArr);
   };
-  onEditing = (label, id) => {
-    this.setState(({ todoData }) => {
-      const idx = todoData.findIndex((el) => el.id === id);
-      const oldItem = todoData[idx];
-      const newItem = { ...oldItem, label };
-      const newArray = [...todoData.slice(0, idx), newItem, ...todoData.slice(idx + 1)];
-      return {
-        todoData: newArray,
-      };
-    });
+  const onToggle = (id) => {
+    const idx = todoData.findIndex((el) => el.id === id);
+    const oldItem = todoData[idx];
+    const newItem = { ...oldItem, done: !oldItem.done };
+    const newArray = [...todoData.slice(0, idx), newItem, ...todoData.slice(idx + 1)];
+    setTodoData(newArray);
   };
-  filter(items, filter) {
+  const onEditing = (label, id) => {
+    const idx = todoData.findIndex((el) => el.id === id);
+    const oldItem = todoData[idx];
+    const newItem = { ...oldItem, label };
+    const newArray = [...todoData.slice(0, idx), newItem, ...todoData.slice(idx + 1)];
+    setTodoData(newArray);
+  };
+  const filters = (items, filter) => {
     switch (filter) {
       case 'all':
         return items;
@@ -73,77 +55,62 @@ export default class App extends React.Component {
       default:
         return items;
     }
-  }
-  onFilterChange = (filter) => {
-    this.setState({ filter });
   };
-  clearComplited = () => {
-    this.setState(({ todoData }) => {
-      return {
-        todoData: todoData.filter((item) => !item.done),
-      };
-    });
+  const onFilterChange = (filter) => {
+    setFilter(filter);
   };
-  onPlay = (id) => {
-    clearInterval(this.interval);
-    this.interval = setInterval(() => {
-      this.onTick(id);
-    }, 1000);
+  const clearComplited = () => {
+    setTodoData(todoData.filter((item) => !item.done));
   };
-  onStop = () => {
-    clearInterval(this.interval);
+  const onTick = (id) => {
+    const idx = todoData.findIndex((el) => el.id === id);
+    const oldItem = todoData[idx];
+    if (Number(oldItem.min) !== 0 && Number(oldItem.sec) === 0) {
+      const newItem = { ...oldItem, min: Number(oldItem.min) - 1, sec: 59 };
+      const newTodoData = [...todoData.slice(0, idx), newItem, ...todoData.slice(idx + 1)];
+      setTodoData(newTodoData);
+    } else if (Number(oldItem.min) === 0 && Number(oldItem.sec) === 0) {
+      const newItem = { ...oldItem, min: 0, sec: 0 };
+      const newTodoData = [...todoData.slice(0, idx), newItem, ...todoData.slice(idx + 1)];
+      setTodoData(newTodoData);
+    } else {
+      const newItem = { ...oldItem, sec: Number(oldItem.sec) - 1 };
+      const newTodoData = [...todoData.slice(0, idx), newItem, ...todoData.slice(idx + 1)];
+      setTodoData(newTodoData);
+    }
   };
-  onTick = (id) => {
-    this.setState(({ todoData }) => {
-      const idx = todoData.findIndex((el) => el.id === id);
-      const oldItem = todoData[idx];
-      if (Number(oldItem.min) !== 0 && Number(oldItem.sec) === 0) {
-        const newItem = { ...oldItem, min: Number(oldItem.min) - 1, sec: 59 };
-        const newTodoData = [...todoData.slice(0, idx), newItem, ...todoData.slice(idx + 1)];
-        return {
-          todoData: newTodoData,
-        };
-      } else if (Number(oldItem.min) === 0 && Number(oldItem.sec) === 0) {
-        const newItem = { ...oldItem, min: 0, sec: 0 };
-        const newTodoData = [...todoData.slice(0, idx), newItem, ...todoData.slice(idx + 1)];
-        clearInterval(this.interval);
-        return {
-          todoData: newTodoData,
-        };
-      } else {
-        const newItem = { ...oldItem, sec: Number(oldItem.sec) - 1 };
-        const newTodoData = [...todoData.slice(0, idx), newItem, ...todoData.slice(idx + 1)];
-        return {
-          todoData: newTodoData,
-        };
-      }
-    });
+  const onPlay = (id) => {
+    const idx = todoData.findIndex((el) => el.id === id);
+    const oldItem = todoData[idx];
+    const newItem = { ...oldItem, count: true };
+    const newArray = [...todoData.slice(0, idx), newItem, ...todoData.slice(idx + 1)];
+    setTodoData(newArray);
   };
-  render() {
-    const { todoData, filter } = this.state;
-    const visibleItems = this.filter(todoData, filter);
-    const doneCount = todoData.filter((el) => el.done).length;
-    const todoCount = todoData.length - doneCount;
-    return (
-      <section className="todoapp">
-        <NewTaskForm addItem={this.addItem} />
-        <TaskList
-          itemsActive={this.itemsActive}
-          onEditing={this.onEditing}
-          onDeleted={this.deleteItem}
-          onToggle={this.onToggle}
-          todos={visibleItems}
-          onPlay={this.onPlay}
-          onStop={this.onStop}
-          onTick={this.onTick}
-        />
-        <Footer
-          filter={filter}
-          onFilterChange={this.onFilterChange}
-          clearComplited={this.clearComplited}
-          todo={todoCount}
-        />
-      </section>
-    );
-  }
+  const onStop = (id) => {
+    const idx = todoData.findIndex((el) => el.id === id);
+    const oldItem = todoData[idx];
+    const newItem = { ...oldItem, count: false };
+    const newArray = [...todoData.slice(0, idx), newItem, ...todoData.slice(idx + 1)];
+    setTodoData(newArray);
+  };
+  const visibleItems = filters(todoData, filter);
+  const doneCount = todoData.filter((el) => el.done).length;
+  const todoCount = todoData.length - doneCount;
+  return (
+    <section className="todoapp">
+      <NewTaskForm addItem={addItem} />
+      <TaskList
+        onPlay={onPlay}
+        onStop={onStop}
+        onEditing={onEditing}
+        onDeleted={deleteItem}
+        onToggle={onToggle}
+        todos={visibleItems}
+        onTick={onTick}
+      />
+      <Footer filter={filter} onFilterChange={onFilterChange} clearComplited={clearComplited} todo={todoCount} />
+    </section>
+  );
 }
+
+export default App;
