@@ -110,7 +110,6 @@ function App() {
   const visibleItems = filters(todoData, filter);
   const doneCount = todoData.filter((el) => el.done).length;
   const todoCount = todoData.length - doneCount;
-  console.log(todoData);
   return (
     <section className="todoapp">
       <NewTaskForm addItem={addItem} />
