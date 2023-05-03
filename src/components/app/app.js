@@ -21,28 +21,36 @@ function App() {
     };
   };
   const deleteItem = (id) => {
-    const idx = todoData.findIndex((el) => el.id === id);
-    const newArray = [...todoData.slice(0, idx), ...todoData.slice(idx + 1)];
-    setTodoData(newArray);
+    setTodoData((todoData) => {
+      const idx = todoData.findIndex((el) => el.id === id);
+      const newArray = [...todoData.slice(0, idx), ...todoData.slice(idx + 1)];
+      return newArray;
+    });
   };
   const addItem = (text, min, sec) => {
-    const newItem = createTodoItem(text, min, sec);
-    const newArr = [...todoData, newItem];
-    setTodoData(newArr);
+    setTodoData((todoData) => {
+      const newItem = createTodoItem(text, min, sec);
+      const newArr = [...todoData, newItem];
+      return newArr;
+    });
   };
   const onToggle = (id) => {
-    const idx = todoData.findIndex((el) => el.id === id);
-    const oldItem = todoData[idx];
-    const newItem = { ...oldItem, done: !oldItem.done };
-    const newArray = [...todoData.slice(0, idx), newItem, ...todoData.slice(idx + 1)];
-    setTodoData(newArray);
+    setTodoData((todoData) => {
+      const idx = todoData.findIndex((el) => el.id === id);
+      const oldItem = todoData[idx];
+      const newItem = { ...oldItem, done: !oldItem.done };
+      const newArray = [...todoData.slice(0, idx), newItem, ...todoData.slice(idx + 1)];
+      return newArray;
+    });
   };
   const onEditing = (label, id) => {
-    const idx = todoData.findIndex((el) => el.id === id);
-    const oldItem = todoData[idx];
-    const newItem = { ...oldItem, label };
-    const newArray = [...todoData.slice(0, idx), newItem, ...todoData.slice(idx + 1)];
-    setTodoData(newArray);
+    setTodoData((todoData) => {
+      const idx = todoData.findIndex((el) => el.id === id);
+      const oldItem = todoData[idx];
+      const newItem = { ...oldItem, label };
+      const newArray = [...todoData.slice(0, idx), newItem, ...todoData.slice(idx + 1)];
+      return newArray;
+    });
   };
   const filters = (items, filter) => {
     switch (filter) {
@@ -63,39 +71,46 @@ function App() {
     setTodoData(todoData.filter((item) => !item.done));
   };
   const onTick = (id) => {
-    const idx = todoData.findIndex((el) => el.id === id);
-    const oldItem = todoData[idx];
-    if (Number(oldItem.min) !== 0 && Number(oldItem.sec) === 0) {
-      const newItem = { ...oldItem, min: Number(oldItem.min) - 1, sec: 59 };
-      const newTodoData = [...todoData.slice(0, idx), newItem, ...todoData.slice(idx + 1)];
-      setTodoData(newTodoData);
-    } else if (Number(oldItem.min) === 0 && Number(oldItem.sec) === 0) {
-      const newItem = { ...oldItem, min: 0, sec: 0 };
-      const newTodoData = [...todoData.slice(0, idx), newItem, ...todoData.slice(idx + 1)];
-      setTodoData(newTodoData);
-    } else {
-      const newItem = { ...oldItem, sec: Number(oldItem.sec) - 1 };
-      const newTodoData = [...todoData.slice(0, idx), newItem, ...todoData.slice(idx + 1)];
-      setTodoData(newTodoData);
-    }
+    setTodoData((todoData) => {
+      const idx = todoData.findIndex((el) => el.id === id);
+      const oldItem = todoData[idx];
+      if (Number(oldItem.min) !== 0 && Number(oldItem.sec) === 0) {
+        const newItem = { ...oldItem, min: Number(oldItem.min) - 1, sec: 59 };
+        const newTodoData = [...todoData.slice(0, idx), newItem, ...todoData.slice(idx + 1)];
+        return newTodoData;
+      } else if (Number(oldItem.min) === 0 && Number(oldItem.sec) === 0) {
+        const newItem = { ...oldItem, min: 0, sec: 0 };
+        const newTodoData = [...todoData.slice(0, idx), newItem, ...todoData.slice(idx + 1)];
+        return newTodoData;
+      } else {
+        const newItem = { ...oldItem, sec: Number(oldItem.sec) - 1 };
+        const newTodoData = [...todoData.slice(0, idx), newItem, ...todoData.slice(idx + 1)];
+        return newTodoData;
+      }
+    });
   };
   const onPlay = (id) => {
-    const idx = todoData.findIndex((el) => el.id === id);
-    const oldItem = todoData[idx];
-    const newItem = { ...oldItem, count: true };
-    const newArray = [...todoData.slice(0, idx), newItem, ...todoData.slice(idx + 1)];
-    setTodoData(newArray);
+    setTodoData((todoData) => {
+      const idx = todoData.findIndex((el) => el.id === id);
+      const oldItem = todoData[idx];
+      const newItem = { ...oldItem, count: true };
+      const newArray = [...todoData.slice(0, idx), newItem, ...todoData.slice(idx + 1)];
+      return newArray;
+    });
   };
   const onStop = (id) => {
-    const idx = todoData.findIndex((el) => el.id === id);
-    const oldItem = todoData[idx];
-    const newItem = { ...oldItem, count: false };
-    const newArray = [...todoData.slice(0, idx), newItem, ...todoData.slice(idx + 1)];
-    setTodoData(newArray);
+    setTodoData((todoData) => {
+      const idx = todoData.findIndex((el) => el.id === id);
+      const oldItem = todoData[idx];
+      const newItem = { ...oldItem, count: false };
+      const newArray = [...todoData.slice(0, idx), newItem, ...todoData.slice(idx + 1)];
+      return newArray;
+    });
   };
   const visibleItems = filters(todoData, filter);
   const doneCount = todoData.filter((el) => el.done).length;
   const todoCount = todoData.length - doneCount;
+  console.log(todoData);
   return (
     <section className="todoapp">
       <NewTaskForm addItem={addItem} />
